@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.load
 import com.example.foodappmvvm.databinding.FragmentFoodsListBinding
+import com.example.foodappmvvm.utils.setupListWithAdapter
 import com.example.foodappmvvm.viewmodel.FoodsListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,6 +38,13 @@ class FoodsListFragment : Fragment() {
                         crossfade(true)
                         crossfade(500)
                     }
+                }
+            }
+            //Filters
+            viewModel.getFilterList()
+            viewModel.filtersListData.observe(viewLifecycleOwner){
+                filterSpinner.setupListWithAdapter(it) {letter->
+                    Toast.makeText(requireContext(), letter, Toast.LENGTH_SHORT).show()
                 }
             }
         }
