@@ -37,6 +37,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -52,6 +55,13 @@ dependencies {
     //Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.8.9")
     implementation("androidx.navigation:navigation-ui-ktx:2.8.9")
+    //Architecture components
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    //Coroutines
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     //Room database
     implementation("androidx.room:room-runtime:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
@@ -61,12 +71,6 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.52")
     kapt("com.google.dagger:hilt-compiler:2.52")
     kapt("androidx.hilt:hilt-compiler:1.2.0")
-    //RxJava
-    implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
-    implementation("io.reactivex.rxjava3:rxjava:3.1.8")
-    implementation("androidx.room:room-rxjava3:2.6.1")
-    //RxBinding
-    implementation("com.jakewharton.rxbinding4:rxbinding:4.0.0")
     //Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.11.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
@@ -77,10 +81,7 @@ dependencies {
     implementation ("io.coil-kt:coil:2.7.0")
     //Gson
     implementation ("com.google.code.gson:gson:2.11.0")
-    //RxJava for retrofit
-    implementation ("com.squareup.retrofit2:adapter-rxjava3:2.11.0")
     //Other
     implementation ("com.flaviofaria:kenburnsview:1.0.7")
-    implementation ("it.greyfox:rxnetwork:0.0.5")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
