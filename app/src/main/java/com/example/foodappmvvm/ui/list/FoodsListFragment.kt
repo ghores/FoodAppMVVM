@@ -12,9 +12,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import com.example.foodappmvvm.R
 import com.example.foodappmvvm.databinding.FragmentFoodsListBinding
 import com.example.foodappmvvm.ui.list.adapter.CategoriesAdapter
 import com.example.foodappmvvm.ui.list.adapter.FoodsAdapter
+import com.example.foodappmvvm.utils.CheckConnection
 import com.example.foodappmvvm.utils.MyResponse
 import com.example.foodappmvvm.utils.isVisible
 import com.example.foodappmvvm.utils.setupListWithAdapter
@@ -36,6 +38,11 @@ class FoodsListFragment : Fragment() {
 
     @Inject
     lateinit var foodsAdapter: FoodsAdapter
+
+    @Inject
+    lateinit var checkConnection: CheckConnection
+
+    enum class PageState { EMPTY, NETWORK, NONE }
 
     //Other
     private val viewModel: FoodsListViewModel by viewModels()
@@ -102,11 +109,17 @@ class FoodsListFragment : Fragment() {
 
                     MyResponse.Status.SUCCESS -> {
                         homeFoodsLoading.isVisible(false, foodsList)
-                        foodsAdapter.setData(it.data!!.meals)
-                        foodsList.setupRecyclerView(
-                            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false),
-                            foodsAdapter
-                        )
+                        if (it.data!!.meals != null) {
+                            if (it.data.meals.isNotEmpty()) {
+                                checkConnectionOrEmpty(false, PageState.NONE)
+                                foodsAdapter.setData(it.data.meals)
+                                foodsList.setupRecyclerView(LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false),
+                                    foodsAdapter
+                                )
+                            }
+                        } else {
+                            checkConnectionOrEmpty(true, PageState.EMPTY)
+                        }
                     }
 
                     MyResponse.Status.ERROR -> {
@@ -121,6 +134,14 @@ class FoodsListFragment : Fragment() {
                     viewModel.getSearchFoodList(it.toString())
                 }
             }
+            //Check internet
+            checkConnection.observe(viewLifecycleOwner) {
+                if (it) {
+                    checkConnectionOrEmpty(false, PageState.NONE)
+                } else {
+                    checkConnectionOrEmpty(true, PageState.NETWORK)
+                }
+            }
         }
     }
 
@@ -128,4 +149,28 @@ class FoodsListFragment : Fragment() {
         super.onStop()
         _binding = null
     }
+
+    private fun checkConnectionOrEmpty(isShownError: Boolean, state: PageState) {
+        binding?.apply {
+            if (isShownError) {
+                homeDisLay.isVisible(true, homeContent)
+                when (state) {
+                    PageState.EMPTY -> {
+                        disconnectLay.disImg.setImageResource(R.drawable.box)
+                        disconnectLay.disTxt.text = getString(R.string.emptyList)
+                    }
+
+                    PageState.NETWORK -> {
+                        disconnectLay.disImg.setImageResource(R.drawable.disconnect)
+                        disconnectLay.disTxt.text = getString(R.string.checkInternet)
+                    }
+
+                    else -> {}
+                }
+            } else {
+                homeDisLay.isVisible(false, homeContent)
+            }
+        }
+    }
 }
+

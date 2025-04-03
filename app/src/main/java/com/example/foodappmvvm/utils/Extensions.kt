@@ -29,8 +29,8 @@ fun Spinner.setupListWithAdapter(list: MutableList<out Any>, callback: (String) 
     }
 }
 
-//ProgressBar
-fun ProgressBar.isVisible(isShowLoading: Boolean, container: View) {
+//View
+fun View.isVisible(isShowLoading: Boolean, container: View) {
     if (isShowLoading) {
         this.visibility = View.VISIBLE
         container.visibility = View.GONE
