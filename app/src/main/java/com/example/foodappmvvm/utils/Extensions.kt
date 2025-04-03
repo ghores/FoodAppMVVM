@@ -6,7 +6,9 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
+import android.widget.ProgressBar
 import android.widget.Spinner
+import androidx.recyclerview.widget.RecyclerView
 import com.example.foodappmvvm.R
 import com.google.android.material.snackbar.Snackbar
 
@@ -27,11 +29,33 @@ fun Spinner.setupListWithAdapter(list: MutableList<out Any>, callback: (String) 
     }
 }
 
+//ProgressBar
+fun ProgressBar.isVisible(isShowLoading: Boolean, container: View) {
+    if (isShowLoading) {
+        this.visibility = View.VISIBLE
+        container.visibility = View.GONE
+    } else {
+        this.visibility = View.GONE
+        container.visibility = View.VISIBLE
+    }
+}
+
 //Check network
 fun Context.isNetworkAvailable(): Boolean {
     val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val info = cm.activeNetworkInfo
     return info != null && info.isConnected
+}
+
+//RecyclerView
+fun RecyclerView.setupRecyclerView(
+    layoutManager: RecyclerView.LayoutManager,
+    adapter: RecyclerView.Adapter<*>
+) {
+    this.layoutManager = layoutManager
+    this.setHasFixedSize(true)
+    this.isNestedScrollingEnabled = false
+    this.adapter = adapter
 }
 
 //SnackBar
