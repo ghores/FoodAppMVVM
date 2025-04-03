@@ -6,6 +6,7 @@ import com.example.foodappmvvm.data.server.ApiServices
 import com.example.foodappmvvm.utils.MyResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import retrofit2.Response
@@ -39,6 +40,47 @@ class FoodsListRepository @Inject constructor(private val api: ApiServices) {
                     emit(MyResponse.error(""))
                 }
             }
-        }
+        }.catch {
+            emit(MyResponse.error(it.message.toString()))
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getFoodList(letter: String): Flow<MyResponse<ResponseFoodList>> {
+        return flow {
+            emit(MyResponse.loading())
+            when (api.getFoodList(letter).code()) {
+                in 200..202 -> {
+                    emit(MyResponse.success(api.getFoodList(letter).body()!!))
+                }
+            }
+        }.catch {
+            emit(MyResponse.error(it.message.toString()))
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getSearchFoodList(letter: String): Flow<MyResponse<ResponseFoodList>> {
+        return flow {
+            emit(MyResponse.loading())
+            when (api.getSearchFoodList(letter).code()) {
+                in 200..202 -> {
+                    emit(MyResponse.success(api.getSearchFoodList(letter).body()!!))
+                }
+            }
+        }.catch {
+            emit(MyResponse.error(it.message.toString()))
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getFoodsByCategory(letter: String): Flow<MyResponse<ResponseFoodList>> {
+        return flow {
+            emit(MyResponse.loading())
+            when (api.getFoodsByCategory(letter).code()) {
+                in 200..202 -> {
+                    emit(MyResponse.success(api.getFoodsByCategory(letter).body()!!))
+                }
+            }
+        }.catch {
+            emit(MyResponse.error(it.message.toString()))
+        }.flowOn(Dispatchers.IO)
     }
 }

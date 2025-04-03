@@ -1,22 +1,27 @@
 package com.example.foodappmvvm.ui.list
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.example.foodappmvvm.databinding.FragmentFoodsListBinding
 import com.example.foodappmvvm.ui.list.adapter.CategoriesAdapter
+import com.example.foodappmvvm.ui.list.adapter.FoodsAdapter
 import com.example.foodappmvvm.utils.MyResponse
 import com.example.foodappmvvm.utils.isVisible
 import com.example.foodappmvvm.utils.setupListWithAdapter
 import com.example.foodappmvvm.utils.setupRecyclerView
 import com.example.foodappmvvm.utils.showSnackBar
 import com.example.foodappmvvm.viewmodel.FoodsListViewModel
+import com.google.android.youtube.player.internal.f
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -28,6 +33,9 @@ class FoodsListFragment : Fragment() {
 
     @Inject
     lateinit var categoriesAdapter: CategoriesAdapter
+
+    @Inject
+    lateinit var foodsAdapter: FoodsAdapter
 
     //Other
     private val viewModel: FoodsListViewModel by viewModels()
@@ -55,7 +63,7 @@ class FoodsListFragment : Fragment() {
             viewModel.getFilterList()
             viewModel.filtersListData.observe(viewLifecycleOwner) {
                 filterSpinner.setupListWithAdapter(it) { letter ->
-                    Toast.makeText(requireContext(), letter, Toast.LENGTH_SHORT).show()
+                    viewModel.getFoodList(letter)
                 }
             }
             //Category
@@ -79,6 +87,38 @@ class FoodsListFragment : Fragment() {
                         homeCategoryLoading.isVisible(false, categoryList)
                         binding!!.root.showSnackBar(it.message.toString())
                     }
+                }
+            }
+            categoriesAdapter.setOnItemClickListener {
+                viewModel.getFoodsByCategory(it.strCategory.toString())
+            }
+            //Foods
+            viewModel.getFoodList("A")
+            viewModel.foodListData.observe(viewLifecycleOwner) {
+                when (it.status) {
+                    MyResponse.Status.LOADING -> {
+                        homeFoodsLoading.isVisible(true, foodsList)
+                    }
+
+                    MyResponse.Status.SUCCESS -> {
+                        homeFoodsLoading.isVisible(false, foodsList)
+                        foodsAdapter.setData(it.data!!.meals)
+                        foodsList.setupRecyclerView(
+                            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false),
+                            foodsAdapter
+                        )
+                    }
+
+                    MyResponse.Status.ERROR -> {
+                        homeCategoryLoading.isVisible(false, categoryList)
+                        binding!!.root.showSnackBar(it.message.toString())
+                    }
+                }
+            }
+            //Search
+            searchEdt.addTextChangedListener {
+                if (it.toString().length > 2) {
+                    viewModel.getSearchFoodList(it.toString())
                 }
             }
         }
