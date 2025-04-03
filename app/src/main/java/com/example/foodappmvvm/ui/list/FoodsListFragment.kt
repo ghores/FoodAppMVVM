@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.example.foodappmvvm.R
@@ -57,7 +58,7 @@ class FoodsListFragment : Fragment() {
         //InitViews
         binding?.apply {
             //Random food
-            viewModel.getFoodRandom()
+            //viewModel.getFoodRandom()
             viewModel.randomFoodData.observe(viewLifecycleOwner) {
                 it[0].let { meal ->
                     headerImg.load(meal.strMealThumb) {
@@ -74,7 +75,7 @@ class FoodsListFragment : Fragment() {
                 }
             }
             //Category
-            viewModel.getCategoriesFoodList()
+            //viewModel.getCategoriesFoodList()
             viewModel.categoriesListData.observe(viewLifecycleOwner) {
                 when (it.status) {
                     MyResponse.Status.LOADING -> {
@@ -127,6 +128,10 @@ class FoodsListFragment : Fragment() {
                         binding!!.root.showSnackBar(it.message.toString())
                     }
                 }
+            }
+            foodsAdapter.setOnItemClickListener {
+                val direction = FoodsListFragmentDirections.actionListToDetail(it.idMeal!!.toInt())
+                findNavController().navigate(direction)
             }
             //Search
             searchEdt.addTextChangedListener {

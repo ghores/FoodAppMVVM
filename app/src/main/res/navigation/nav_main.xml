@@ -9,10 +9,18 @@
         android:id="@+id/foodDetailFragment"
         android:name="com.example.foodappmvvm.ui.detail.FoodDetailFragment"
         android:label="FoodDetailFragment"
-        tools:layout="@layout/fragment_food_detail" />
+        tools:layout="@layout/fragment_food_detail" >
+        <argument
+            android:name="foodId"
+            app:argType="integer" />
+    </fragment>
     <fragment
         android:id="@+id/foodsListFragment"
         android:name="com.example.foodappmvvm.ui.list.FoodsListFragment"
         android:label="FoodsListFragment"
-        tools:layout="@layout/fragment_foods_list" />
+        tools:layout="@layout/fragment_foods_list" >
+        <action
+            android:id="@+id/actionListToDetail"
+            app:destination="@id/foodDetailFragment" />
+    </fragment>
 </navigation>

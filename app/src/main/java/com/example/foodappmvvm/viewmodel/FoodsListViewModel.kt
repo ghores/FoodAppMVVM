@@ -14,6 +14,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FoodsListViewModel @Inject constructor(private val repository: FoodsListRepository) : ViewModel() {
+    init {
+        getCategoriesFoodList()
+        getFoodRandom()
+    }
+
     //Livedata
     val randomFoodData = MutableLiveData<List<ResponseFoodList.Meal>>()
     val filtersListData = MutableLiveData<MutableList<Char>>()
