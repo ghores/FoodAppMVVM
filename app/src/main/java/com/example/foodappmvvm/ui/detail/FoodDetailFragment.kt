@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.foodappmvvm.R
+import com.example.foodappmvvm.data.database.FoodEntity
 import com.example.foodappmvvm.databinding.FragmentFoodDetailBinding
 import com.example.foodappmvvm.ui.detail.player.PlayerActivity
 import com.example.foodappmvvm.ui.list.FoodsListFragment.PageState
@@ -35,16 +37,16 @@ class FoodDetailFragment : Fragment() {
     @Inject
     lateinit var checkConnection: CheckConnection
 
+    @Inject
+    lateinit var entity: FoodEntity
+
     //Other
     private val viewModel: FoodDetailViewModel by viewModels()
     private val args: FoodDetailFragmentArgs by navArgs()
     private var foodId = 0
+    private var isFavorite = false
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentFoodDetailBinding.inflate(inflater, container, false)
         return binding!!.root
     }
@@ -69,6 +71,11 @@ class FoodDetailFragment : Fragment() {
                         detailLoading.isVisible(false, detailContentLay)
                         //Set data
                         it.data?.meals?.get(0)?.let { itMeal ->
+                            //Entity
+                            entity.id = itMeal.idMeal!!.toInt()
+                            entity.title = itMeal.strMeal.toString()
+                            entity.img = itMeal.strMealThumb.toString()
+                            //Set data
                             foodCoverImg.load(itMeal.strMealThumb) {
                                 crossfade(true)
                                 crossfade(500)
@@ -129,6 +136,24 @@ class FoodDetailFragment : Fragment() {
                         detailLoading.isVisible(false, detailContentLay)
                         Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                     }
+                }
+            }
+            //Favorite
+            viewModel.existsFood(foodId)
+            viewModel.isFavoriteData.observe(viewLifecycleOwner) {
+                isFavorite = it
+                if (it) {
+                    detailFav.setColorFilter(ContextCompat.getColor(requireContext(), R.color.tartOrange))
+                } else {
+                    detailFav.setColorFilter(ContextCompat.getColor(requireContext(), R.color.black))
+                }
+            }
+            //Save / Delete
+            detailFav.setOnClickListener {
+                if (isFavorite) {
+                    viewModel.deleteNote(entity)
+                } else {
+                    viewModel.saveNote(entity)
                 }
             }
         }
