@@ -17,7 +17,7 @@ class PlayerActivity : YouTubeBaseActivity() {
     private val binding get() = _binding!!
 
     //Other
-    private lateinit var player: YouTubePlayer
+    private var player: YouTubePlayer? = null
     private var videoId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,12 +35,12 @@ class PlayerActivity : YouTubeBaseActivity() {
         val listener = object : OnInitializedListener {
             override fun onInitializationSuccess(
                 p0: YouTubePlayer.Provider?,
-                p1: YouTubePlayer,
+                p1: YouTubePlayer?,
                 p2: Boolean
             ) {
                 player = p1
-                player.loadVideo(videoId)
-                player.play()
+                player?.loadVideo(videoId)
+                player?.play()
             }
 
             override fun onInitializationFailure(
@@ -53,7 +53,7 @@ class PlayerActivity : YouTubeBaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        player.release()
+        player?.release()
         _binding = null
     }
 }

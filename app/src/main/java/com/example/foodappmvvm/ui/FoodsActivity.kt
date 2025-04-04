@@ -40,8 +40,8 @@ class FoodsActivity : AppCompatActivity() {
         return navHost.navController.navigateUp() || super.onNavigateUp()
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         _binding = null
     }
 }
