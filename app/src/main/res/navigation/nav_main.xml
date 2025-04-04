@@ -19,8 +19,19 @@
         android:name="com.example.foodappmvvm.ui.list.FoodsListFragment"
         android:label="FoodsListFragment"
         tools:layout="@layout/fragment_foods_list" >
-        <action
-            android:id="@+id/actionListToDetail"
-            app:destination="@id/foodDetailFragment" />
     </fragment>
+
+    <action
+        android:id="@+id/actionListToDetail"
+        app:destination="@id/foodDetailFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    <fragment
+        android:id="@+id/foodsFavoriteFragment"
+        android:name="com.example.foodappmvvm.ui.favorite.FoodsFavoriteFragment"
+        android:label="fragment_foods_favorite"
+        tools:layout="@layout/fragment_foods_favorite" />
 </navigation>
